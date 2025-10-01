@@ -1,0 +1,444 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{setspace}
+\usepackage[english,greek]{babel}
+\usepackage{alphabeta}
+
+\onehalfspacing
+
+\newcommand{\gr}[1]{\foreignlanguage{greek}{#1}}
+
+\title{GRCPC 2024 Editorial}
+\date{}
+
+
+\begin{document}
+\maketitle
+
+
+
+
+
+\section*{A. The Binary Chicken Farm}
+
+\textbf{Author: Manolis Tsamis} \\
+\textbf{Analysis: Matina Nadali}
+
+\vspace{2em}
+\noindent \textbf{Tags: simulation, brute force} 
+\hfill \textbf{Accepted 28/100}
+
+\hfill \textbf{First Solve Plato's Rave! 54 minutes}
+
+\vspace{2em}
+
+\noindent Given the small constraints, we can approach the problem using brute force. Our goal is to fill the table \(\text{eggs}[K][N]\), where \(\text{eggs}[k][i]\) denotes the egg laid by chicken \(i\) on the \(k\)-th day. We initialize \(\text{eggs}[0][i]\) with the egg laid by the \(i\)-th chicken on the first day. Then, we iterate over the next \(K - 1\) days, generating the new eggs that the chickens will lay each day according to the given influence relationships. Specifically:
+
+\begin{enumerate}
+    \item If chicken \(i\) is not influenced by another chicken, then
+    \[
+        \text{eggs}[k][i] = \text{eggs}[k - 1][i].
+    \]
+    \item If chicken \(i\) is influenced by chicken \(j\), then
+    \[
+        \text{eggs}[k][i] = \text{eggs}[k - 1][i] \oplus \text{eggs}[k - 1][j].
+    \]
+\end{enumerate}
+
+Finally, we print the eggs laid by the chickens on the last day, i.e. $\text{eggs}[k - 1]$.
+
+\vspace{1em}
+
+\textbf{Observations:}
+\begin{enumerate}
+    \item Since the length of the binary strings is small (\(L \leq 20\)), we can conveniently store the eggs as integers and perform the XOR operations directly on them. However, we first need to read the eggs as strings to determine their length so that we can print the eggs with the same length in the output, adding the required number of leading zeros. 
+    \item We notice that the egg that chicken \(i\) lays on day \(k\) depends only on the egg laid by that chicken and potentially one other chicken on the \textbf{previous} day. Therefore, instead of storing the entire \(K \times N\) \(\text{eggs}\) matrix, we can store and update two arrays of length \(N\), corresponding to the eggs laid by the chickens on the previous and current day, respectively. However, this optimization is optional.
+
+\end{enumerate}
+
+\vspace{1em}
+
+\textbf{Time Complexity:}
+$O(K \times N)$
+
+\vspace{1em}
+\noindent \textbf{Solution Link:} 
+\href{https://github.com/StathisKons/GRCPC-2024-Editorial-Implementations/blob/main/A.%20The%20Binary%20Chicken%20Farm.cpp}{The Binary Chicken Farm.cpp}
+
+
+\vspace{5em}
+
+\newpage 
+
+\section*{B. Bureaucracy}
+
+\textbf{Author: Panagiotis Karelis} \\
+\textbf{Analysis: Panagiotis Megas}
+
+\vspace{2em}
+
+\noindent
+\textbf{Tags: sortings, greedy} \hfill \textbf{Accepted 19/392}
+
+\hfill \textbf{First Solve TAI!FT 26 minutes}
+
+\vspace{2em}
+
+\noindent Let us start by making the following observations:
+
+\vspace{1em}
+
+\noindent  \textbf{1. How many times does each person get reinserted into the back of the queue?}
+
+\noindent Every time we process a person, the remaining time of their request is reduced by \( M \), \( r_i \mathrel{-}= M \).  
+If \( r_i \leq 0 \), the person leaves; otherwise, they are reinserted at the back of the queue.  
+Thus, each person is processed \( \left\lceil \frac{r_i}{M} \right\rceil \) times.
+
+\vspace{1em}
+
+\noindent \textbf{2. Does the order change when we reinsert people into the back?}
+
+\noindent After processing everyone once, each person has either completed their request and left, or remains in the queue.  
+The relative order among the remaining people does not change in subsequent rounds. This is because in each round, the queue is processed from front to back, and anyone who does not meet the exit condition is reinserted at the end in the same order they were processed.  
+In other words in each new round, we encounter the remaining people in the same order as the previous round.
+
+\vspace{2em}
+
+\noindent \textbf{Answer:}
+
+\noindent Using the above observations, we can compute for each person \( i \) the number of times they enter the queue, \( q_i = \left\lceil \frac{r_i}{M} \right\rceil \).  
+To determine the order in which they complete their requests, we sort the pairs \( (q_i, i) \) by \( q_i \), breaking ties by original position \( i \).  
+This ensures that individuals with fewer rounds leave earlier, and if two people have the same \( q_i \), the one who was earlier in the original queue leaves first.
+
+\noindent The final sorted order is the answer.
+
+\vspace{1em}
+\noindent \textbf{Time Complexity:}
+$O(n\log n)$
+
+\vspace{1em}
+\noindent \textbf{Solution Link:} 
+\href{https://github.com/StathisKons/GRCPC-2024-Editorial-Implementations/blob/main/B.%20Bureaucracy.cpp}{Bureaucracy.cpp}
+
+\newpage
+\vspace{5em}
+\section*{C. Fair Split of the Golden Tablet}
+
+    \textbf{Author: Panagiotis Karelis}\\
+    \textbf{Analysis: Stathis Konstantinou}
+    
+    \vspace{2em}
+    
+    \noindent \textbf{Tags: binary search} \hfill \textbf{Accepted 5/37}
+    
+    \hfill \textbf{First Solve Killswitch 138 minutes}
+    
+    \vspace{2em}
+    
+    \noindent You are given a rectangular tablet with a circular hole entirely inside it. The task is to choose a vertical line (an x-coordinate) such that the gold on the left side (rectangle area minus hole area) equals the gold on the right.
+    
+    \noindent Imagine sliding the vertical cut from the left edge of the rectangle to the right. As the cut moves, the amount of gold on the left changes continuously and never decreases. Thus, the gold on the left side of the cut is a continuous, nondecreasing function of x.
+    
+    \noindent Since this function is continuous and monotone, and its values at the left and right edges of the rectangle go from below to above half of the total gold, there must be a unique position $ x \in [Sx,Tx] $ where the left-gold equals half the total. This guarantees both existence and uniqueness of the solution, so the solution can be efficiently computed by binary searching on the value of $x$.
+    
+    
+    \vspace{1em}
+    \noindent \textbf{Time Complexity:}
+    $O(log{(T_x - S_x)})$
+    \vspace{1em}
+    
+    \noindent \textbf{Solution Link:} 
+    \href{https://github.com/StathisKons/GRCPC-2024-Editorial-Implementations/blob/main/C.%20Fair%20Split%20of%20the%20Golden%20Tablet.cpp}{Fair Split of the Golden Tablet.cpp}
+    
+\newpage
+
+\vspace{5em}
+
+\section*{D. Deciphering Ancient Symbols}
+
+\textbf{Author: Apostolos Giannoulidis}\\
+\textbf{Analysis: Matina Nadali}
+
+\vspace{2em}
+\noindent \textbf{Tags: brute force} 
+\hfill \textbf{Accepted 10/62}
+
+\hfill \textbf{First Solve Acoustics 29 minutes}
+
+\vspace{2em}
+
+\noindent First, we notice that we can translate only the parts of the large string that are exact occurrences of the smaller strings. Therefore, we will find all occurrences of each deciphered string in the sentence. This can be done naively in \(O(m \times n \times l)\) time by iterating over all possible starting indices of the smaller string and checking whether the following characters of the larger string match the corresponding characters of the smaller string.
+
+\vspace{1em}
+
+\noindent After processing all small strings, we know which parts (or indices) of the large string can be translated, and we aim to find the longest continuous segment among them. In other words, we have a boolean array \(\text{can}\), where \(\text{can}[i] = 1\) if the \(i\)-th character can be deciphered, and we need to find the longest segment consisting only of ones in that array. To do this, we keep two variables: \(\text{ans}\), representing the length of the longest segment found so far, and \(\text{cur}\), representing the length of the current suffix of ones ending at the current index. We loop over the array and update the variables as follows:
+
+\begin{enumerate}
+    \item If \(\text{can}[i] = 0\), set \(\text{ans} = \max(\text{ans}, \text{cur})\) and \(\text{cur} = 0\).
+    \item If \(\text{can}[i] = 1\), increment \(\text{cur}\) by 1.
+\end{enumerate}
+
+\noindent Finally, we take the maximum of \(\text{ans}\) and \(\text{cur}\) to obtain the length of the longest decipherable segment.
+
+
+\vspace{1em}
+
+\noindent \textbf{Time Complexity:}
+$O(m \times n \times l)$
+
+\vspace{1em}
+\noindent \textbf{Solution Link:} 
+\href{https://github.com/StathisKons/GRCPC-2024-Editorial-Implementations/blob/main/D.%20Deciphering%20Ancient%20Symbols.cpp}{Deciphering Ancient Symbols.cpp}
+
+\vspace{1em}
+\noindent \textbf{Alternative Solution:} 
+\href{https://github.com/StathisKons/GRCPC-2024-Editorial-Implementations/blob/main/D.%20Alt%20Sol%20Deciphering%20Ancient%20Symbols.cpp}{Alt Deciphering Ancient Symbols.cpp}
+
+\newpage
+
+\vspace{5em}
+
+\section*{E. Generation and Transmission Network}
+
+\textbf{Author: Loukas Georgiadis}\\
+\textbf{Analysis: Panagiotis Megas/Matina Nadali}
+
+\vspace{2em}
+\noindent \textbf{Tags: graphs, MST} 
+\hfill \textbf{Accepted 6/12}
+
+\hfill \textbf{First Solve AC/DC 70 minutes}
+
+\vspace{2em}
+
+\noindent We can observe that the problem is quite similar to the classic minimum-spanning tree problem in a weighted undirected graph.  \textbf{What is the main difference?}
+
+\noindent The key difference is that in this problem we do not necessarily end up with a tree, but may have multiple sources, resulting in a forest. 
+
+\vspace{1em}
+
+\noindent \textbf{Is there a way to transpose this to the classic MST problem?}
+
+\noindent Instead of working on the original graph that contains self-edges, we can add a node O and replace all self-edges with edges from O to each node. 
+
+\vspace{1em}
+\noindent It is sufficient to run any MST algorithm in the new graph and calculate the cost. That will be our answer. 
+
+\vspace{1em}
+\noindent \textbf{Why does this work?}
+
+\noindent You can think of the new added node as the main source, just as the initial problem for every node to get electricity  we must either connect it to the main source (build a generator) or connect to another node that has already electricity. At each step, we take the minimum-cost action that connects a new node, which is optimal.
+
+\vspace{1em}
+
+\noindent \noindent \textbf{Time Complexity:}
+
+\noindent Using Prim’s algorithm with adjacency matrices: $O(n^2)$. 
+
+\noindent Using Kruskal’s algorithm with sorting: $O(n^2 \log n)$.
+
+\vspace{1em}
+\noindent \textbf{Solution Link:} 
+\href{https://github.com/StathisKons/GRCPC-2024-Editorial-Implementations/blob/main/E.%20Generation%20and%20Transmission%20Network.cpp}{Generation and Transmission Network.cpp}
+
+\newpage
+\vspace{5em}
+
+\section*{F. Anomia}
+
+    \textbf{Author: Panagiotis Karelis}\\
+    \textbf{Analysis: Stathis Konstantinou}
+    
+    \vspace{2em}
+    \noindent \textbf{Tags: BFS/DFS} 
+    \hfill \textbf{Accepted 11/111}
+    
+    \hfill \textbf{First Solve: Should I Stay or Should I Code 70 minutes}
+    
+    \vspace{2em}
+    
+    \noindent The problem can be broken down into two phases:
+    
+    \begin{enumerate}
+        \item{Marking of Forbidden Cells}
+        \item{Finding if there exists a safe path}
+    \end{enumerate}
+    
+    \subsection*{1. Marking of Forbidden Cells}
+
+        \noindent We should mark any cell that the Fugitive cannot step into. These include cells that:
+        \begin{itemize}
+            \item{Contain a Building}
+            \item{Have a police officer}
+            \item{Can be seen by a police officer}
+        \end{itemize}
+
+        \noindent Simply simulate each officer's line of sight, in the appropriate direction, for up to $ D $ steps,
+        stopping early if a building or another officer is encountered. Any cell seen this way is marked as
+        forbidden.
+        
+
+    \subsection*{2. DFS/BFS For existence of safe path}
+
+        \noindent Once we have marked the forbidden cells, we perform a Depth First Search traversal from
+        the Fugitive's starting location \textbf{F}. The Fugitive can only move to adjacent cells that aren't:
+        \begin{itemize}
+            \item{Out of Bounds}
+            \item{Forbidden}
+        \end{itemize}
+
+        \noindent If the Hideout \textbf{H} is visited during the traversal, that means there is a safe path,
+        so we output \texttt{YES}, otherwise output \texttt{NO}.
+
+
+    \subsection*{Complexity Analysis}
+        \noindent Say we have $ K $ officers. Simulating their line of sight takes $ \mathcal{O}(K \cdot D) $. At a first glance it may seem that at worst case we could have a time complexity of $ \mathcal{O}(N \cdot M \cdot
+        D)$, which wouldn't pass under the given constraints, but we can observe that each cell will be visited
+        at most once from every direction (say 2 officers are facing the same direction and have the same
+        cell in their line of sight, one must be behind the other, so his view is obstructed, thus by contradiction its not possible).
+        \noindent Thus, marking the forbidden cells takes $ \mathcal{O}(4NM) = \mathcal{O}(NM)$ time.
+
+        
+        \noindent
+        DFS on the grid is also $ \mathcal{O}(NM)$
+        \vspace{1em}
+
+        
+        \noindent
+        \textbf{Total time complexity: $ \mathcal{O}(NM) $}
+        
+    \vspace{1em}
+    \noindent \textbf{Solution Link:} 
+    \href{https://github.com/StathisKons/GRCPC-2024-Editorial-Implementations/blob/main/F.%20Anomia.cpp}{Anomia.cpp}
+    \vspace{1em}
+    
+    \vspace{5em}
+
+    \newpage
+    \vspace{5em}
+    
+\section*{G. Airport Departures' Optimization}
+
+\textbf{Author: Spitalas Alexandros}\\
+\textbf{Analysis: Panagiotis Megas}
+
+\vspace{2em}
+\noindent \textbf{Tags: dp, binary search} 
+\hfill \textbf{Accepted 7/49}
+
+\hfill \textbf{First Solve AC/DC 20 minutes}
+
+\vspace{2em}
+
+\noindent Let us start by making a simplification.
+
+\noindent \textbf{Are all the values given for each flight necessary to calculate the answer?}
+
+\noindent For each flight $i$, a reward $b[i]$ and a cost $c[i]$ are given instead of storing both, we can assume that for every plane we will need to pay the cost $c[i]$ and if it departs on time we will be rewarded with $b[i]-c[i]$ instead of just $b[i]$. In this way, we only store for each i $b[i]-c[i]$ and the total sum of $c[i]$.
+
+\vspace{1em}
+
+\noindent While not necessary, this transformation simplifies the transitions.
+
+\vspace{1em}
+
+\noindent Now back to our problem. \textbf{When will a plane depart from the airport?}
+
+\noindent Each plane either departs on time or is delayed indefinitely, since delaying does not increase the cost.
+
+
+\noindent Furthermore the only condition for a plane to leave on time is that no other plane left in the last T time units.
+
+\vspace{1em}
+
+\noindent Let $dp[i]$ be the maximum reward achievable considering the first i flights. Using the above observations we see that there are 2 possible transitions, we can either delay the $ith$ plane indefinitely and thus we get no extra reward $dp[i] = dp[i-1]$ or we can schedule flight $i$, then the previous scheduled flight must be the latest one that departs at or before $t[i] - T$. Let’s call its index $p[i]$. Then we get the transition $dp[i] = dp[p[i]]+b[i]-c[i]$
+
+\noindent Finally, as we want the maximum, $dp[i] = max(dp[i-1], dp[p[i]]+b[i]-c[i])$
+
+\vspace{1em}
+
+\noindent The final answer will be $dp[N] +  \sum_{i=1}^{n} c[i]$
+
+\vspace{1em}
+
+\noindent To calculate $p[i]$ we can either for each plane binary search for the first plane that leaves before $ti-T$, or using the fact that $ti-T$ is increasing use a sweeping algorithm.
+
+\vspace{1em}
+
+\noindent \textbf{Time Complexity:}
+$O(n)$ or $O(n\log n)$
+
+\vspace{1em}
+\noindent \textbf{Solution Link:} 
+    \href{https://github.com/StathisKons/GRCPC-2024-Editorial-Implementations/blob/main/G.%20Airport%20Departures%E2%80%99%20Optimization.cpp}{Airport Departures’ Optimization.cpp}
+
+\newpage
+\vspace{5em}
+
+\section*{H. The magical forest of Seih Sou}
+
+    \textbf{Author: Panagiotis Karelis}\\
+    \textbf{Analysis: Stathis Konstantinou}
+    
+    \vspace{2em}
+    \noindent \textbf{Tags: DSU} 
+    \hfill \textbf{Accepted 2/7}
+    
+    \hfill \textbf{First Solve  GeeksforGreeks 110 minutes}
+    
+    \vspace{2em}
+    
+    
+    \noindent
+        Handling removals and connectivity splits online is hard. But we can process the sequence offline in reverse!
+    
+    \vspace{0.5em}
+    
+    \noindent
+        If we remove the withering trees $ T_1 \dots T_Q $  and then start adding them back in reverse order ($ T_Q, T_{Q-1},\dots, T_1 $), the graph evolves by only add operations (node additions + their incident edges to already present nodes).
+        
+    \noindent
+        We can maintain connected components with a Disjoint Set Union (DSU). For each DSU component we maintain:
+        \begin{itemize}
+            \item size[v] = number of nodes in the component,
+            \item a boolean value denoting if the component contains a magical node
+        \end{itemize}
+    
+    \noindent
+        A component is magical iff it contains a node from S. When two components are merged, if exactly one of them was magical before the merge, then all nodes of the non-magical component become magical at that union. %; that number is exactly the size of that component.
+    
+    \noindent
+        When we add a node, we create a 1-node component and then union it with existing neighbors. By summing the sizes of components that change from non-magical to magical during these unions we obtain the number of nodes that regain magic at that step.
+    
+    \vspace{0.5em}
+    
+    \noindent
+        Those regained counts in reverse are exactly the numbers that were lost when the nodes were removed in the forward process. So just simulate the reverse process, storing the gains at each step and output them in forward order.
+        
+    \vspace{1em}
+    
+    % \noindent \textbf{Time Complexity: $ \mathcal{O}((N + M + Q) \alpha(N)) $}
+    \noindent\textbf{Time complexity:} \(\mathcal{O}((N+M+Q)\,\alpha(N))\), where \(\alpha\) is the inverse Ackermann function. % \gr{Ισως βγαλω το} ackermann...
+    
+    
+    \vspace{1em}
+    
+    \noindent
+    textbf{Solution Link:} \href{https://github.com/StathisKons/GRCPC-2024-Editorial-Implementations/blob/main/H.%20The%20magical%20forest%20of%20Seih%20Sou.cpp}{The magical forest of Seih Sou.cpp}
+    
+
+\end{document}
+
+
