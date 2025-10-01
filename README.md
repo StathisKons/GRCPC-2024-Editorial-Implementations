@@ -5,7 +5,7 @@ This repository contains sample solutions for [GRCPC 2024 problems](https://code
 You can see more submissions for the problems you've solved at:
 👉 [https://codeforces.com/gym/105453/status](https://codeforces.com/gym/105453/status)
 
-For detailed explanations of the solutions, see the Contest's **Editorial** (link).
+For detailed explanations of the solutions, see the Contest's [**Editorial**](https://codeforces.com/gym/105453/attachments/download/33584/GRCPC_2024_Editorial.pdf).
 
 ---
 
